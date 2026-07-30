@@ -43,6 +43,7 @@ export class SSHProfilesService extends QuickConnectProfileProvider<SSHProfile> 
             httpProxyHost: null,
             httpProxyPort: null,
             reuseSession: true,
+            useSystemSSH: false,
             input: { backspace: 'backspace' },
         },
         clearServiceMessagesOnConnect: true,

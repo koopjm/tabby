@@ -30,7 +30,7 @@ export abstract class Frontend {
     protected dragOver = new Subject<DragEvent>()
     protected drop = new Subject<DragEvent>()
     protected destroyed = new Subject<void>()
-    public pasteRequested$: Subject<void>
+    pasteRequested$: Subject<void>
 
     get ready$ (): Observable<void> { return this.ready }
     get title$ (): Observable<string> { return this.title }

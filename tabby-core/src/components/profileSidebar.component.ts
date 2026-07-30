@@ -217,52 +217,52 @@ interface CollapsableProfileGroup extends ProfileGroup {
         .profile-sidebar.collapsed .profile-sidebar-header {
             justify-content: center;
         }
-    `]
+    `],
 })
 export class ProfileSidebarComponent implements OnInit, OnDestroy {
-    @Input() collapsed: boolean = false
+    @Input() collapsed = false
     @Output() collapsedChange = new EventEmitter<boolean>()
     @Output() hide = new EventEmitter<void>()
 
     profileGroups: PartialProfileGroup<CollapsableProfileGroup>[] = []
     private destroy$ = new Subject<void>()
 
-    constructor(
+    constructor (
         private profilesService: ProfilesService,
         private config: ConfigService,
     ) {}
 
-    async ngOnInit() {
+    async ngOnInit (): Promise<void> {
         await this.refreshProfileGroups()
 
         // Subscribe to config changes to refresh profiles
         this.config.changed$.pipe(
-            takeUntil(this.destroy$)
+            takeUntil(this.destroy$),
         ).subscribe(() => {
             this.refreshProfileGroups()
         })
     }
 
-    ngOnDestroy() {
+    ngOnDestroy (): void {
         this.destroy$.next()
         this.destroy$.complete()
     }
 
-    toggleCollapse() {
+    toggleCollapse (): void {
         this.collapsed = !this.collapsed
         this.collapsedChange.emit(this.collapsed)
     }
 
-    hideSidebar() {
+    hideSidebar (): void {
         this.hide.emit()
     }
 
-    async refreshProfileGroups(): Promise<void> {
+    async refreshProfileGroups (): Promise<void> {
         try {
-            const profileGroupCollapsed = JSON.parse(localStorage.getItem('profileSidebarGroupCollapsed') || '{}')
+            const profileGroupCollapsed = JSON.parse(localStorage.getItem('profileSidebarGroupCollapsed') ?? '{}')
             const groups = await this.profilesService.getProfileGroups({
                 includeNonUserGroup: true,
-                includeProfiles: true
+                includeProfiles: true,
             })
 
             // Sort groups
@@ -272,7 +272,7 @@ export class ProfileSidebarComponent implements OnInit, OnDestroy {
 
             this.profileGroups = groups.map(g => ({
                 ...g,
-                collapsed: profileGroupCollapsed[g.id] ?? false
+                collapsed: profileGroupCollapsed[g.id] ?? false,
             } as PartialProfileGroup<CollapsableProfileGroup>))
         } catch (error) {
             console.error('Error refreshing profile groups:', error)
@@ -280,11 +280,11 @@ export class ProfileSidebarComponent implements OnInit, OnDestroy {
         }
     }
 
-    isGroupVisible(group: PartialProfileGroup<ProfileGroup>): boolean {
+    isGroupVisible (group: PartialProfileGroup<ProfileGroup>): boolean {
         return (group.profiles ?? []).length > 0
     }
 
-    toggleGroupCollapse(group: PartialProfileGroup<CollapsableProfileGroup>): void {
+    toggleGroupCollapse (group: PartialProfileGroup<CollapsableProfileGroup>): void {
         if ((group.profiles?.length ?? 0) === 0) {
             return
         }
@@ -292,15 +292,13 @@ export class ProfileSidebarComponent implements OnInit, OnDestroy {
         this.saveProfileGroupCollapse(group)
     }
 
-    launchProfile(profile: PartialProfile<Profile>): void {
+    launchProfile (profile: PartialProfile<Profile>): void {
         this.profilesService.openNewTabForProfile(profile)
     }
 
-
-
-    private saveProfileGroupCollapse(group: PartialProfileGroup<CollapsableProfileGroup>): void {
+    private saveProfileGroupCollapse (group: PartialProfileGroup<CollapsableProfileGroup>): void {
         try {
-            const profileGroupCollapsed = JSON.parse(localStorage.getItem('profileSidebarGroupCollapsed') || '{}')
+            const profileGroupCollapsed = JSON.parse(localStorage.getItem('profileSidebarGroupCollapsed') ?? '{}')
             profileGroupCollapsed[group.id] = group.collapsed
             localStorage.setItem('profileSidebarGroupCollapsed', JSON.stringify(profileGroupCollapsed))
         } catch (error) {

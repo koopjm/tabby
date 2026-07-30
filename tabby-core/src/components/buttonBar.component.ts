@@ -42,7 +42,8 @@ export interface ButtonBarButton {
             </div>
         </div>
     `,
-    styles: [`
+    styles: [
+        `
         .button-bar {
             position: relative;
             width: 100%;
@@ -142,23 +143,24 @@ export interface ButtonBarButton {
         .button-label {
             white-space: nowrap;
         }
-    `]
+        `,
+    ],
 })
 export class ButtonBarComponent implements OnInit, OnDestroy {
     @Input() buttons: ButtonBarButton[] = []
-    @Input() collapsed: boolean = false
+    @Input() collapsed = false
     @Output() collapsedChange = new EventEmitter<boolean>()
     @Output() hide = new EventEmitter<void>()
 
     private destroy$ = new Subject<void>()
 
-    constructor(
+    constructor (
         private app: AppService,
         private notifications: NotificationsService,
         private hotkeys: HotkeysService,
     ) {}
 
-    ngOnInit() {
+    ngOnInit (): void {
         // Set default collapsed state if not specified
         if (typeof this.collapsed === 'undefined') {
             this.collapsed = true
@@ -166,23 +168,23 @@ export class ButtonBarComponent implements OnInit, OnDestroy {
         this.updateButtonBarHeight()
     }
 
-    ngOnDestroy() {
+    ngOnDestroy (): void {
         this.destroy$.next()
         this.destroy$.complete()
     }
 
-    toggleCollapse() {
+    toggleCollapse (): void {
         this.collapsed = !this.collapsed
         this.collapsedChange.emit(this.collapsed)
         this.updateButtonBarHeight()
     }
 
-    hideBar() {
+    hideBar (): void {
         this.hide.emit()
     }
 
-    sendCommand(event: MouseEvent, button: ButtonBarButton) {
-        const type = button.type || 'terminal'  // Default to terminal if not specified
+    sendCommand (event: MouseEvent, button: ButtonBarButton): void {
+        const type = button.type ?? 'terminal'  // Default to terminal if not specified
 
         if (type === 'app-command') {
             // Trigger app command using hotkeys service
@@ -208,7 +210,7 @@ export class ButtonBarComponent implements OnInit, OnDestroy {
         }, 0)
     }
 
-    private async _send(tab: any, cmd: string, appendCR: boolean) {
+    private async _send (tab: any, cmd: string, appendCR: boolean): Promise<void> {
         if (!tab) {
             this.notifications.error('No active tab', 'Please open a terminal tab first.')
             return
@@ -216,7 +218,7 @@ export class ButtonBarComponent implements OnInit, OnDestroy {
 
         // Handle split tabs - get the focused tab
         if (tab instanceof SplitTabComponent) {
-            this._send((tab as SplitTabComponent).getFocusedTab(), cmd, appendCR)
+            this._send(tab.getFocusedTab(), cmd, appendCR)
             return
         }
 
@@ -236,18 +238,18 @@ export class ButtonBarComponent implements OnInit, OnDestroy {
         }
     }
 
-    showButtonContextMenu(event: MouseEvent, button: ButtonBarButton) {
+    showButtonContextMenu (event: MouseEvent, button: ButtonBarButton): void {
         event.preventDefault()
         event.stopPropagation()
 
         // Show a notification about the configuration
         this.notifications.info(
             'Button Configuration',
-            `Right-click detected! To configure "${button.label}" button, go to Settings > Button Bar. You can also edit the config file directly.`
+            `Right-click detected! To configure "${button.label}" button, go to Settings > Button Bar. You can also edit the config file directly.`,
         )
     }
 
-    private updateButtonBarHeight() {
+    private updateButtonBarHeight (): void {
         // Set CSS custom property for button bar height
         // Use setTimeout to ensure DOM is updated first
         setTimeout(() => {

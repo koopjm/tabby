@@ -228,6 +228,12 @@ ul.nav-tabs(ngbNav, #nav='ngbNav')
                     .description Multiplex multiple shells through the same connection
                 toggle([(ngModel)]='profile.options.reuseSession')
 
+            .form-line(ng:if='hostApp.platform !== Platform.Web')
+                .header
+                    .title(translate) Use system SSH command
+                    .description(translate) Use local ssh command instead of built-in SSH client (recommended for Linux/macOS for X11 compatibility)
+                toggle([(ngModel)]='profile.options.useSystemSSH')
+
             .form-line
                 .header
                     .title(translate) Keep Alive Interval (Milliseconds)
@@ -285,7 +291,7 @@ ul.nav-tabs(ngbNav, #nav='ngbNav')
                 .w-75
                     div(*ngFor='let alg of supportedAlgorithms.serverHostKey')
                         checkbox([text]='alg', [(ngModel)]='algorithms.serverHostKey[alg]')
-                        
+
             .form-line.align-items-start
                 .header
                     .title Compression

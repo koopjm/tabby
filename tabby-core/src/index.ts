@@ -64,8 +64,8 @@ export function TranslateMessageFormatCompilerFactory (): TranslateMessageFormat
 const PROVIDERS = [
     { provide: HotkeyProvider, useClass: AppHotkeyProvider, multi: true },
     { provide: Theme, useClass: NewTheme, multi: true },
-            { provide: ConfigProvider, useClass: CoreConfigProvider, multi: true },
-        { provide: ConfigProvider, useClass: ButtonBarConfigProvider, multi: true },
+    { provide: ConfigProvider, useClass: CoreConfigProvider, multi: true },
+    { provide: ConfigProvider, useClass: ButtonBarConfigProvider, multi: true },
     { provide: TabContextMenuItemProvider, useClass: CommonOptionsContextMenu, multi: true },
     { provide: TabContextMenuItemProvider, useClass: TabManagementContextMenu, multi: true },
     { provide: TabContextMenuItemProvider, useClass: TaskCompletionContextMenu, multi: true },

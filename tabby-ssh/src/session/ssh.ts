@@ -529,16 +529,22 @@ export class SSHSession {
 
         this.ssh.x11ChannelOpen$.subscribe(async event => {
             this.logger.info(`Incoming X11 connection from ${event.clientAddress}:${event.clientPort}`)
-            const displaySpec = (this.config.store.ssh.x11Display || process.env.DISPLAY) ?? 'localhost:0'
-            this.logger.debug(`Trying display ${displaySpec}`)
+
+            // Get display spec - use override if set, otherwise detect appropriate display for Wayland
+            let displaySpec = this.config.store.ssh.x11Display
+            if (!displaySpec) {
+                displaySpec = this.detectBestX11Display()
+            }
+
+            this.logger.debug(`Using display ${displaySpec}`)
 
             if (!(this.ssh instanceof russh.AuthenticatedSSHClient)) {
                 throw new Error('Cannot open agent channel before auth')
             }
 
             const channel = await this.ssh.activateChannel(event.channel)
-
             const socket = new X11Socket()
+
             try {
                 const x11Stream = await socket.connect(displaySpec)
                 this.logger.info('Connection forwarded')
@@ -546,7 +552,9 @@ export class SSHSession {
             } catch (e) {
                 // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 this.emitServiceMessage(colors.bgRed.black(' X ') + ` Could not connect to the X server: ${e}`)
-                this.emitServiceMessage(`    Tabby tried to connect to ${JSON.stringify(X11Socket.resolveDisplaySpec(displaySpec))} based on the DISPLAY environment var (${displaySpec})`)
+                this.emitServiceMessage(`    Tabby tried to connect to display: ${displaySpec}`)
+                this.emitServiceMessage(`    Current DISPLAY environment: ${process.env.DISPLAY}`)
+                this.emitServiceMessage(`    You can override this in SSH settings under "Override X11 display"`)
                 if (process.platform === 'win32') {
                     this.emitServiceMessage('    To use X forwarding, you need a local X server, e.g.:')
                     this.emitServiceMessage('    * VcXsrv: https://sourceforge.net/projects/vcxsrv/')
@@ -842,6 +850,27 @@ export class SSHSession {
             this.forwardedPorts = this.forwardedPorts.filter(x => x !== fw)
         }
         this.emitServiceMessage(`Stopped forwarding ${fw}`)
+    }
+
+    private detectBestX11Display (): string {
+        const currentDisplay = process.env.DISPLAY
+
+        // If there's no DISPLAY set, use a reasonable default
+        if (!currentDisplay) {
+            this.logger.debug('No DISPLAY environment variable, using localhost:0.0')
+            return 'localhost:0.0'
+        }
+
+        // For local displays (:0, :1, etc.), keep the Unix socket format
+        // This works better on Wayland systems where XWayland uses Unix sockets
+        if (/^:?\d+(\.\d+)?$/.test(currentDisplay)) {
+            this.logger.debug(`Using local display format: ${currentDisplay}`)
+            return currentDisplay
+        }
+
+        // For all other cases, use the current DISPLAY as-is
+        this.logger.debug(`Using current DISPLAY: ${currentDisplay}`)
+        return currentDisplay
     }
 
     async destroy (): Promise<void> {

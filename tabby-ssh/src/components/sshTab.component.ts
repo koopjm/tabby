@@ -10,6 +10,7 @@ import { KeyboardInteractivePrompt, SSHSession } from '../session/ssh'
 import { SSHPortForwardingModalComponent } from './sshPortForwardingModal.component'
 import { SSHProfile } from '../api'
 import { SSHShellSession } from '../session/shell'
+import { SystemSSHSession } from '../session/systemSSH'
 import { SSHMultiplexerService } from '../services/sshMultiplexer.service'
 
 /** @hidden */
@@ -62,6 +63,8 @@ export class SSHTabComponent extends ConnectableTerminalTabComponent<SSHProfile>
                 case 'launch-winscp':
                     if (this.sshSession) {
                         this.ssh.launchWinSCP(this.sshSession)
+                    } else if (this.profile.options.useSystemSSH) {
+                        this.write('\r\n' + colors.black.bgYellow(' ! ') + ' WinSCP launch not supported with system SSH\r\n')
                     }
                     break
                 case 'open-sftp':
@@ -159,19 +162,34 @@ export class SSHTabComponent extends ConnectableTerminalTabComponent<SSHProfile>
     }
 
     private async initializeSessionMaybeMultiplex (multiplex = true): Promise<void> {
-        this.sshSession = await this.setupOneSession(this.injector, this.profile, multiplex)
-        const session = new SSHShellSession(this.injector, this.sshSession, this.profile)
+        if (this.profile.options.useSystemSSH && this.hostApp.platform !== Platform.Web) {
+            // Use system SSH command instead of russh
+            const session = new SystemSSHSession(this.injector, this.profile)
 
-        this.setSession(session)
-        this.attachSessionHandler(session.serviceMessage$, msg => {
-            msg = msg.replace(/\n/g, '\r\n      ')
-            this.write(`\r${colors.black.bgWhite(' SSH ')} ${msg}\r\n`)
-            session.resize(this.size.columns, this.size.rows)
-        })
+            this.setSession(session)
+            this.attachSessionHandler(session.serviceMessage$, msg => {
+                msg = msg.replace(/\n/g, '\r\n      ')
+                this.write(`\r${colors.black.bgWhite(' SSH ')} ${msg}\r\n`)
+                session.resize(this.size.columns, this.size.rows)
+            })
 
-        await session.start()
+            await session.start()
+            this.session?.resize(this.size.columns, this.size.rows)
+        } else {
+            // Use russh (default behavior)
+            this.sshSession = await this.setupOneSession(this.injector, this.profile, multiplex)
+            const session = new SSHShellSession(this.injector, this.sshSession, this.profile)
 
-        this.session?.resize(this.size.columns, this.size.rows)
+            this.setSession(session)
+            this.attachSessionHandler(session.serviceMessage$, msg => {
+                msg = msg.replace(/\n/g, '\r\n      ')
+                this.write(`\r${colors.black.bgWhite(' SSH ')} ${msg}\r\n`)
+                session.resize(this.size.columns, this.size.rows)
+            })
+
+            await session.start()
+            this.session?.resize(this.size.columns, this.size.rows)
+        }
     }
 
     async initializeSession (): Promise<void> {
@@ -181,7 +199,7 @@ export class SSHTabComponent extends ConnectableTerminalTabComponent<SSHProfile>
         } catch {
             try {
                 await this.initializeSessionMaybeMultiplex(false)
-            } catch (e) {
+            } catch (e: any) {
                 console.error('SSH session initialization failed', e)
                 this.write(colors.black.bgRed(' X ') + ' ' + colors.red(e.message) + '\r\n')
                 return
@@ -190,6 +208,10 @@ export class SSHTabComponent extends ConnectableTerminalTabComponent<SSHProfile>
     }
 
     showPortForwarding (): void {
+        if (!this.sshSession) {
+            this.write('\r\n' + colors.black.bgYellow(' ! ') + ' Port forwarding not supported with system SSH\r\n')
+            return
+        }
         const modal = this.ngbModal.open(SSHPortForwardingModalComponent).componentInstance as SSHPortForwardingModalComponent
         modal.session = this.sshSession!
     }
@@ -216,6 +238,10 @@ export class SSHTabComponent extends ConnectableTerminalTabComponent<SSHProfile>
     }
 
     async openSFTP (): Promise<void> {
+        if (!this.sshSession) {
+            this.write('\r\n' + colors.black.bgYellow(' ! ') + ' SFTP not supported with system SSH\r\n')
+            return
+        }
         this.sftpPath = await this.session?.getWorkingDirectory() ?? this.sftpPath
         setTimeout(() => {
             this.sftpPanelVisible = true

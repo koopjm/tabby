@@ -28,7 +28,7 @@ export default () => ({
     },
     mode: process.env.TABBY_DEV ? 'development' : 'production',
     optimization:{
-        minimize: false,
+        minimize: !process.env.TABBY_DEV,
     },
     context: __dirname,
     devtool: 'source-map',
@@ -36,7 +36,7 @@ export default () => ({
         path: path.join(__dirname, 'dist'),
         pathinfo: true,
         filename: '[name].js',
-        publicPath: 'auto',
+        publicPath: '',
     },
     resolve: {
         modules: ['src/', 'node_modules', '../node_modules', 'assets/'].map(x => path.join(__dirname, x)),

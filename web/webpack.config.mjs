@@ -40,7 +40,7 @@ const config = {
         path: path.join(__dirname, 'dist'),
         pathinfo: true,
         filename: '[name].js',
-        publicPath: 'auto',
+        publicPath: '',
     },
     resolve: {
         modules: ['../app/node_modules', 'node_modules', '../node_modules', '../app/assets/'].map(x => path.join(__dirname, x)),

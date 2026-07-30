@@ -95,7 +95,7 @@ export class XTermFrontend extends Frontend {
     private platformService: PlatformService
     private hostApp: HostAppService
     private themes: ThemesService
-    public pasteRequested$ = new Subject<void>() // New property
+    pasteRequested$ = new Subject<void>()
 
     constructor (injector: Injector) {
         super(injector)

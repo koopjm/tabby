@@ -204,8 +204,8 @@ export class AppRootComponent {
 
             setTimeout(() => {
                 this.config.changed$.subscribe(() => {
-                this.reloadButtonBarConfig()
-                this.reloadProfileSidebarConfig()
+                    this.reloadButtonBarConfig()
+                    this.reloadProfileSidebarConfig()
                 })
             }, 1000)
         })
@@ -284,7 +284,7 @@ export class AppRootComponent {
         this.hostWindow.toggleMaximize()
     }
 
-    onButtonBarCollapsedChange(collapsed: boolean) {
+    onButtonBarCollapsedChange (collapsed: boolean): void {
         this.buttonBarCollapsed = collapsed
         // Save to config if available
         if (this.config.store.buttonBar) {
@@ -293,7 +293,7 @@ export class AppRootComponent {
         }
     }
 
-    onButtonBarHide() {
+    onButtonBarHide (): void {
         this.buttonBarVisible = false
         // Save to config if available
         if (this.config.store.buttonBar) {
@@ -302,7 +302,7 @@ export class AppRootComponent {
         }
     }
 
-    reloadButtonBarConfig() {
+    reloadButtonBarConfig (): void {
         if (this.config.store.buttonBar) {
             this.buttonBarButtons = this.config.store.buttonBar.buttons || []
             this.buttonBarCollapsed = this.config.store.buttonBar.collapsed ?? true
@@ -310,7 +310,7 @@ export class AppRootComponent {
         }
     }
 
-    onProfileSidebarCollapsedChange(collapsed: boolean) {
+    onProfileSidebarCollapsedChange (collapsed: boolean): void {
         this.profileSidebarCollapsed = collapsed
         // Save to config if available
         if (!this.config.store.profileSidebar) {
@@ -321,7 +321,7 @@ export class AppRootComponent {
         this.config.save()
     }
 
-    onProfileSidebarHide() {
+    onProfileSidebarHide (): void {
         this.profileSidebarVisible = false
         // Save to config if available
         if (!this.config.store.profileSidebar) {
@@ -332,7 +332,7 @@ export class AppRootComponent {
         this.config.save()
     }
 
-    reloadProfileSidebarConfig() {
+    reloadProfileSidebarConfig (): void {
         if (this.config.store.profileSidebar) {
             this.profileSidebarCollapsed = this.config.store.profileSidebar.collapsed ?? true
             this.profileSidebarVisible = this.config.store.profileSidebar.enabled ?? true

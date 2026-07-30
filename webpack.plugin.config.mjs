@@ -47,11 +47,11 @@ export default options => {
             filename: 'index.js',
             pathinfo: true,
             libraryTarget: 'umd',
-            publicPath: 'auto',
+            publicPath: '',
         },
         mode: isDev ? 'development' : 'production',
         optimization:{
-            minimize: false,
+            minimize: !isDev,
         },
         cache: !isDev ? false : {
             type: 'filesystem',

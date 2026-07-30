@@ -5,7 +5,7 @@ interface ButtonBarButton {
     id: string
     label: string
     command: string
-    type?: 'terminal' | 'app-command'  // New field to distinguish between terminal commands and app commands
+    type?: 'terminal' | 'app-command'
     icon?: string
     tooltip?: string
     color?: string
@@ -17,16 +17,16 @@ interface ButtonBarButton {
     templateUrl: './buttonBarSettingsTab.component.pug',
 })
 export class ButtonBarSettingsTabComponent {
-    constructor(
+    constructor (
         public config: ConfigService,
     ) {}
 
-    toggleEnabled(enabled: boolean) {
+    toggleEnabled (enabled: boolean): void {
         if (!this.config.store.buttonBar) {
             this.config.store.buttonBar = {
                 enabled: enabled,
                 collapsed: true,
-                buttons: []
+                buttons: [],
             }
         } else {
             this.config.store.buttonBar.enabled = enabled
@@ -34,18 +34,18 @@ export class ButtonBarSettingsTabComponent {
         this.config.save()
     }
 
-    toggleCollapsed(collapsed: boolean) {
+    toggleCollapsed (collapsed: boolean): void {
         if (this.config.store.buttonBar) {
             this.config.store.buttonBar.collapsed = collapsed
             this.config.save()
         }
     }
 
-    toggleProfileSidebarEnabled(enabled: boolean) {
+    toggleProfileSidebarEnabled (enabled: boolean): void {
         if (!this.config.store.profileSidebar) {
             this.config.store.profileSidebar = {
                 enabled: enabled,
-                collapsed: true
+                collapsed: true,
             }
         } else {
             this.config.store.profileSidebar.enabled = enabled
@@ -53,20 +53,20 @@ export class ButtonBarSettingsTabComponent {
         this.config.save()
     }
 
-    toggleProfileSidebarCollapsed(collapsed: boolean) {
+    toggleProfileSidebarCollapsed (collapsed: boolean): void {
         if (this.config.store.profileSidebar) {
             this.config.store.profileSidebar.collapsed = collapsed
             this.config.save()
         }
     }
 
-    addButton(type: 'terminal' | 'app-command' = 'terminal') {
+    addButton (type: 'terminal' | 'app-command' = 'terminal'): void {
         // Initialize buttonBar config if it doesn't exist
         if (!this.config.store.buttonBar) {
             this.config.store.buttonBar = {
                 enabled: true,
                 collapsed: true,
-                buttons: []
+                buttons: [],
             }
         }
         if (!this.config.store.buttonBar.buttons) {
@@ -79,7 +79,7 @@ export class ButtonBarSettingsTabComponent {
             command: type === 'terminal' ? 'echo "hello"' : '',
             type: type,
             color: type === 'terminal' ? '#007bff' : '#28a745',
-            tooltip: type === 'terminal' ? 'Custom terminal command' : 'Custom app action'
+            tooltip: type === 'terminal' ? 'Custom terminal command' : 'Custom app action',
         }
 
         this.config.store.buttonBar.buttons.push(newButton)
@@ -87,7 +87,7 @@ export class ButtonBarSettingsTabComponent {
         this.reloadButtonBar()
     }
 
-    removeButton(index: number) {
+    removeButton (index: number): void {
         if (this.config.store.buttonBar?.buttons) {
             this.config.store.buttonBar.buttons.splice(index, 1)
             this.config.save()
@@ -95,35 +95,35 @@ export class ButtonBarSettingsTabComponent {
         }
     }
 
-    updateButtonLabel(index: number, label: string) {
+    updateButtonLabel (index: number, label: string): void {
         if (this.config.store.buttonBar?.buttons?.[index]) {
             this.config.store.buttonBar.buttons[index].label = label
             this.config.save()
         }
     }
 
-    updateButtonCommand(index: number, command: string) {
+    updateButtonCommand (index: number, command: string): void {
         if (this.config.store.buttonBar?.buttons?.[index]) {
             this.config.store.buttonBar.buttons[index].command = command
             this.config.save()
         }
     }
 
-    updateButtonColor(index: number, color: string) {
+    updateButtonColor (index: number, color: string): void {
         if (this.config.store.buttonBar?.buttons?.[index]) {
             this.config.store.buttonBar.buttons[index].color = color
             this.config.save()
         }
     }
 
-    updateButtonTooltip(index: number, tooltip: string) {
+    updateButtonTooltip (index: number, tooltip: string): void {
         if (this.config.store.buttonBar?.buttons?.[index]) {
             this.config.store.buttonBar.buttons[index].tooltip = tooltip
             this.config.save()
         }
     }
 
-    updateButtonType(index: number, type: string) {
+    updateButtonType (index: number, type: string): void {
         if (this.config.store.buttonBar?.buttons?.[index]) {
             this.config.store.buttonBar.buttons[index].type = type as 'terminal' | 'app-command'
             // Clear the command when switching types
@@ -132,7 +132,7 @@ export class ButtonBarSettingsTabComponent {
         }
     }
 
-    moveButtonUp(index: number) {
+    moveButtonUp (index: number): void {
         if (index > 0 && this.config.store.buttonBar?.buttons) {
             const buttons = this.config.store.buttonBar.buttons
             const temp = buttons[index]
@@ -143,7 +143,7 @@ export class ButtonBarSettingsTabComponent {
         }
     }
 
-    moveButtonDown(index: number) {
+    moveButtonDown (index: number): void {
         if (this.config.store.buttonBar?.buttons && index < this.config.store.buttonBar.buttons.length - 1) {
             const buttons = this.config.store.buttonBar.buttons
             const temp = buttons[index]
@@ -154,18 +154,16 @@ export class ButtonBarSettingsTabComponent {
         }
     }
 
-    saveChanges() {
+    saveChanges (): void {
         this.config.save()
         this.reloadButtonBar()
     }
 
-    private reloadButtonBar() {
+    private reloadButtonBar (): void {
         // The button bar will automatically reload when config changes
-        // due to the config.changed$ subscription in appRoot.component.ts
-        // No need to manually trigger anything here
     }
 
-    resetToDefaults() {
+    resetToDefaults (): void {
         this.config.store.buttonBar = {
             enabled: true,
             collapsed: true,
@@ -175,30 +173,30 @@ export class ButtonBarSettingsTabComponent {
                     label: 'ls',
                     command: 'ls -la',
                     color: '#007bff',
-                    tooltip: 'List files with details'
+                    tooltip: 'List files with details',
                 },
                 {
                     id: 'pwd',
                     label: 'pwd',
                     command: 'pwd',
                     color: '#28a745',
-                    tooltip: 'Show current directory'
+                    tooltip: 'Show current directory',
                 },
                 {
                     id: 'clear',
                     label: 'clear',
                     command: 'clear',
                     color: '#ffc107',
-                    tooltip: 'Clear terminal screen'
+                    tooltip: 'Clear terminal screen',
                 },
                 {
                     id: 'top',
                     label: 'top',
                     command: 'top',
                     color: '#dc3545',
-                    tooltip: 'Show running processes'
-                }
-            ]
+                    tooltip: 'Show running processes',
+                },
+            ],
         }
         this.config.save()
         this.reloadButtonBar()
