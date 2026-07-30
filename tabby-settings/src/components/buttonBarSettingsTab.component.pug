@@ -1,4 +1,4 @@
-h3 Button Bar Settings
+h3 Extra Bars Settings
 
 .form-group
     .form-check
@@ -7,7 +7,7 @@ h3 Button Bar Settings
             [checked]='config.store.buttonBar?.enabled',
             (change)='toggleEnabled($event.target.checked)'
         )
-        label.form-check-label(for='button-bar-enabled') Enable button bar
+        label.form-check-label(for='button-bar-enabled') Enable button bar (bottom)
 
 .form-group(*ngIf='config.store.buttonBar?.enabled')
     .form-check
@@ -17,6 +17,30 @@ h3 Button Bar Settings
             (change)='toggleCollapsed($event.target.checked)'
         )
         label.form-check-label(for='button-bar-collapsed') Start collapsed
+
+hr
+
+h4 Profile Sidebar
+
+.form-group
+    .form-check
+        input#profile-sidebar-enabled.form-check-input(
+            type='checkbox',
+            [checked]='config.store.profileSidebar?.enabled',
+            (change)='toggleProfileSidebarEnabled($event.target.checked)'
+        )
+        label.form-check-label(for='profile-sidebar-enabled') Enable profile sidebar (left)
+
+.form-group(*ngIf='config.store.profileSidebar?.enabled')
+    .form-check
+        input#profile-sidebar-collapsed.form-check-input(
+            type='checkbox',
+            [checked]='config.store.profileSidebar?.collapsed',
+            (change)='toggleProfileSidebarCollapsed($event.target.checked)'
+        )
+        label.form-check-label(for='profile-sidebar-collapsed') Start collapsed
+
+hr
 
 .form-group(*ngIf='config.store.buttonBar?.enabled')
     h4 Button Configuration

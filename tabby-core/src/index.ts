@@ -32,6 +32,7 @@ import { TransfersMenuComponent } from './components/transfersMenu.component'
 import { ProfileIconComponent } from './components/profileIcon.component'
 import { ProfileTreeComponent } from './components/profileTree.component'
 import { ButtonBarComponent } from './components/buttonBar.component'
+import { ProfileSidebarComponent } from './components/profileSidebar.component'
 
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { AlwaysVisibleTypeaheadDirective } from './directives/alwaysVisibleTypeahead.directive'
@@ -136,6 +137,7 @@ const PROVIDERS = [
         ProfileTreeComponent,
         TabbyFormatedDatePipe,
         ButtonBarComponent,
+        ProfileSidebarComponent,
     ],
     exports: [
         AppRootComponent,
@@ -152,6 +154,7 @@ const PROVIDERS = [
         ProfileIconComponent,
         TabbyFormatedDatePipe,
         ButtonBarComponent,
+        ProfileSidebarComponent,
     ],
 })
 export default class AppModule { // eslint-disable-line @typescript-eslint/no-extraneous-class

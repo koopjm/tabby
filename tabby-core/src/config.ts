@@ -56,6 +56,10 @@ export class ButtonBarConfigProvider extends ConfigProvider {
                     tooltip: 'List Docker containers'
                 }
             ]
+        },
+        profileSidebar: {
+            enabled: true,
+            collapsed: false
         }
     }
 }

@@ -85,7 +85,7 @@ export class ConfigSyncSettingsTabProvider extends SettingsTabProvider {
 export class ButtonBarSettingsTabProvider extends SettingsTabProvider {
     id = 'button-bar'
     icon = 'list'
-    title = 'Button Bar'
+    title = 'Extra Bars'
 
     getComponentType (): any {
         return ButtonBarSettingsTabComponent

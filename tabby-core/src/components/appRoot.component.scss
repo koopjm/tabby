@@ -10,6 +10,7 @@
     cursor: default;
     animation: 0.5s ease-out fadeIn;
     transition: 0.25s background;
+    background: var(--body-bg);
 
     --tabs-height: calc(38px * var(--spaciness));
     --side-tab-width: calc(200px * var(--spaciness));
@@ -22,6 +23,30 @@ $tab-border-radius: 4px;
   width: 100vw;
   height: 100vh;
   flex-direction: row;
+}
+
+.content.has-profile-sidebar {
+  width: calc(100vw - 280px);
+  transition: width 0.3s ease;
+}
+
+.content.has-profile-sidebar-collapsed {
+  width: calc(100vw - 32px);
+  transition: width 0.3s ease;
+}
+
+.content.has-profile-sidebar.has-button-bar {
+  > .content-tab {
+    bottom: var(--button-bar-height, 32px);
+    height: calc(100% - var(--button-bar-height, 32px));
+  }
+}
+
+.content.has-profile-sidebar-collapsed.has-button-bar {
+  > .content-tab {
+    bottom: var(--button-bar-height, 32px);
+    height: calc(100% - var(--button-bar-height, 32px));
+  }
 }
 
 .content {

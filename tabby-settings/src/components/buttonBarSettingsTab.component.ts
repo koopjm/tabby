@@ -41,6 +41,25 @@ export class ButtonBarSettingsTabComponent {
         }
     }
 
+    toggleProfileSidebarEnabled(enabled: boolean) {
+        if (!this.config.store.profileSidebar) {
+            this.config.store.profileSidebar = {
+                enabled: enabled,
+                collapsed: true
+            }
+        } else {
+            this.config.store.profileSidebar.enabled = enabled
+        }
+        this.config.save()
+    }
+
+    toggleProfileSidebarCollapsed(collapsed: boolean) {
+        if (this.config.store.profileSidebar) {
+            this.config.store.profileSidebar.collapsed = collapsed
+            this.config.save()
+        }
+    }
+
     addButton(type: 'terminal' | 'app-command' = 'terminal') {
         // Initialize buttonBar config if it doesn't exist
         if (!this.config.store.buttonBar) {

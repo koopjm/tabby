@@ -79,6 +79,8 @@ export class AppRootComponent {
     buttonBarButtons: ButtonBarButton[] = []
     buttonBarCollapsed = true
     buttonBarVisible = true
+    profileSidebarCollapsed = true
+    profileSidebarVisible = true
     private logger: Logger
 
     constructor (
@@ -196,9 +198,14 @@ export class AppRootComponent {
             this.buttonBarCollapsed = this.config.store.buttonBar?.collapsed ?? true
             this.buttonBarVisible = this.config.store.buttonBar?.enabled ?? true
 
+            // Initialize profile sidebar configuration
+            this.profileSidebarCollapsed = this.config.store.profileSidebar?.collapsed ?? true
+            this.profileSidebarVisible = this.config.store.profileSidebar?.enabled ?? true
+
             setTimeout(() => {
                 this.config.changed$.subscribe(() => {
                 this.reloadButtonBarConfig()
+                this.reloadProfileSidebarConfig()
                 })
             }, 1000)
         })
@@ -300,6 +307,35 @@ export class AppRootComponent {
             this.buttonBarButtons = this.config.store.buttonBar.buttons || []
             this.buttonBarCollapsed = this.config.store.buttonBar.collapsed ?? true
             this.buttonBarVisible = this.config.store.buttonBar.enabled ?? true
+        }
+    }
+
+    onProfileSidebarCollapsedChange(collapsed: boolean) {
+        this.profileSidebarCollapsed = collapsed
+        // Save to config if available
+        if (!this.config.store.profileSidebar) {
+            this.config.store.profileSidebar = { enabled: true, collapsed: collapsed }
+        } else {
+            this.config.store.profileSidebar.collapsed = collapsed
+        }
+        this.config.save()
+    }
+
+    onProfileSidebarHide() {
+        this.profileSidebarVisible = false
+        // Save to config if available
+        if (!this.config.store.profileSidebar) {
+            this.config.store.profileSidebar = { enabled: false, collapsed: true }
+        } else {
+            this.config.store.profileSidebar.enabled = false
+        }
+        this.config.save()
+    }
+
+    reloadProfileSidebarConfig() {
+        if (this.config.store.profileSidebar) {
+            this.profileSidebarCollapsed = this.config.store.profileSidebar.collapsed ?? true
+            this.profileSidebarVisible = this.config.store.profileSidebar.enabled ?? true
         }
     }
 
