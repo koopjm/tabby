@@ -176,6 +176,8 @@ $tab-border-radius: 4px;
     position: relative;
     min-height: 0;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 
     > .content-tab {
         position: absolute;
@@ -187,6 +189,21 @@ $tab-border-radius: 4px;
 
         &.content-tab-active {
             left: 0;
+        }
+    }
+
+    &.has-button-bar {
+        > .content-tab {
+            bottom: var(--button-bar-height, 32px);
+            height: calc(100% - var(--button-bar-height, 32px));
+        }
+
+        > button-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
         }
     }
 }

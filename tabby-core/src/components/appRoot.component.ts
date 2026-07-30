@@ -17,6 +17,7 @@ import { SafeModeModalComponent } from './safeModeModal.component'
 import { TabBodyComponent } from './tabBody.component'
 import { SplitTabComponent } from './splitTab.component'
 import { AppService, Command, CommandLocation, FileTransfer, HostWindowService, PlatformService } from '../api'
+import { ButtonBarButton } from './buttonBar.component'
 
 function makeTabAnimation (dimension: string, size: number) {
     return [
@@ -75,6 +76,9 @@ export class AppRootComponent {
     unsortedTabs: BaseTabComponent[] = []
     updatesAvailable = false
     activeTransfers: FileTransfer[] = []
+    buttonBarButtons: ButtonBarButton[] = []
+    buttonBarCollapsed = true
+    buttonBarVisible = true
     private logger: Logger
 
     constructor (
@@ -178,13 +182,25 @@ export class AppRootComponent {
             this.leftToolbarButtons = await this.getToolbarButtons(false)
             this.rightToolbarButtons = await this.getToolbarButtons(true)
 
-            setInterval(() => {
-                if (this.config.store.enableAutomaticUpdates) {
+            // Only set up update checking if automatic updates are enabled
+            if (this.config.store.enableAutomaticUpdates) {
+                setInterval(() => {
                     this.updater.check().then(available => {
                         this.updatesAvailable = available
                     })
-                }
-            }, 3600 * 12 * 1000)
+                }, 3600 * 12 * 1000)
+            }
+
+            // Initialize button bar configuration
+            this.buttonBarButtons = this.config.store.buttonBar?.buttons || []
+            this.buttonBarCollapsed = this.config.store.buttonBar?.collapsed ?? true
+            this.buttonBarVisible = this.config.store.buttonBar?.enabled ?? true
+
+            setTimeout(() => {
+                this.config.changed$.subscribe(() => {
+                this.reloadButtonBarConfig()
+                })
+            }, 1000)
         })
     }
 
@@ -259,6 +275,32 @@ export class AppRootComponent {
 
     toggleMaximize (): void {
         this.hostWindow.toggleMaximize()
+    }
+
+    onButtonBarCollapsedChange(collapsed: boolean) {
+        this.buttonBarCollapsed = collapsed
+        // Save to config if available
+        if (this.config.store.buttonBar) {
+            this.config.store.buttonBar.collapsed = collapsed
+            this.config.save()
+        }
+    }
+
+    onButtonBarHide() {
+        this.buttonBarVisible = false
+        // Save to config if available
+        if (this.config.store.buttonBar) {
+            this.config.store.buttonBar.enabled = false
+            this.config.save()
+        }
+    }
+
+    reloadButtonBarConfig() {
+        if (this.config.store.buttonBar) {
+            this.buttonBarButtons = this.config.store.buttonBar.buttons || []
+            this.buttonBarCollapsed = this.config.store.buttonBar.collapsed ?? true
+            this.buttonBarVisible = this.config.store.buttonBar.enabled ?? true
+        }
     }
 
     protected isTitleBarNeeded (): boolean {

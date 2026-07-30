@@ -5,6 +5,7 @@ import { WindowSettingsTabComponent } from './components/windowSettingsTab.compo
 import { VaultSettingsTabComponent } from './components/vaultSettingsTab.component'
 import { ConfigSyncSettingsTabComponent } from './components/configSyncSettingsTab.component'
 import { ProfilesSettingsTabComponent } from './components/profilesSettingsTab.component'
+import { ButtonBarSettingsTabComponent } from './components/buttonBarSettingsTab.component'
 import { TranslateService } from 'tabby-core'
 
 /** @hidden */
@@ -76,5 +77,17 @@ export class ConfigSyncSettingsTabProvider extends SettingsTabProvider {
 
     getComponentType (): any {
         return ConfigSyncSettingsTabComponent
+    }
+}
+
+/** @hidden */
+@Injectable()
+export class ButtonBarSettingsTabProvider extends SettingsTabProvider {
+    id = 'button-bar'
+    icon = 'list'
+    title = 'Button Bar'
+
+    getComponentType (): any {
+        return ButtonBarSettingsTabComponent
     }
 }

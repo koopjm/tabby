@@ -19,6 +19,7 @@ import { SetVaultPassphraseModalComponent } from './components/setVaultPassphras
 import { ProfilesSettingsTabComponent } from './components/profilesSettingsTab.component'
 import { ReleaseNotesComponent } from './components/releaseNotesTab.component'
 import { ConfigSyncSettingsTabComponent } from './components/configSyncSettingsTab.component'
+import { ButtonBarSettingsTabComponent } from './components/buttonBarSettingsTab.component'
 import { ShowSecretModalComponent } from './components/showSecretModal.component'
 
 import { ConfigSyncService } from './services/configSync.service'
@@ -28,6 +29,7 @@ import { ButtonProvider } from './buttonProvider'
 import { SettingsHotkeyProvider } from './hotkeys'
 import { SettingsConfigProvider } from './config'
 import { HotkeySettingsTabProvider, WindowSettingsTabProvider, VaultSettingsTabProvider, ProfilesSettingsTabProvider, ConfigSyncSettingsTabProvider } from './settings'
+import { ButtonBarSettingsTabProvider } from './settings'
 
 /** @hidden */
 @NgModule({
@@ -47,6 +49,7 @@ import { HotkeySettingsTabProvider, WindowSettingsTabProvider, VaultSettingsTabP
         { provide: SettingsTabProvider, useClass: VaultSettingsTabProvider, multi: true },
         { provide: SettingsTabProvider, useClass: ProfilesSettingsTabProvider, multi: true },
         { provide: SettingsTabProvider, useClass: ConfigSyncSettingsTabProvider, multi: true },
+        { provide: SettingsTabProvider, useClass: ButtonBarSettingsTabProvider, multi: true },
     ],
     declarations: [
         EditProfileModalComponent,
@@ -61,6 +64,7 @@ import { HotkeySettingsTabProvider, WindowSettingsTabProvider, VaultSettingsTabP
         VaultSettingsTabComponent,
         WindowSettingsTabComponent,
         ConfigSyncSettingsTabComponent,
+        ButtonBarSettingsTabComponent,
         ReleaseNotesComponent,
         ShowSecretModalComponent,
     ],

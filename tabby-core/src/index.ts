@@ -31,6 +31,7 @@ import { WelcomeTabComponent } from './components/welcomeTab.component'
 import { TransfersMenuComponent } from './components/transfersMenu.component'
 import { ProfileIconComponent } from './components/profileIcon.component'
 import { ProfileTreeComponent } from './components/profileTree.component'
+import { ButtonBarComponent } from './components/buttonBar.component'
 
 import { AutofocusDirective } from './directives/autofocus.directive'
 import { AlwaysVisibleTypeaheadDirective } from './directives/alwaysVisibleTypeahead.directive'
@@ -48,7 +49,7 @@ import { CustomMissingTranslationHandler, LocaleService, TabbyFormatedDatePipe }
 import { CommandService } from './services/commands.service'
 
 import { NewTheme } from './theme'
-import { CoreConfigProvider } from './config'
+import { CoreConfigProvider, ButtonBarConfigProvider } from './config'
 import { AppHotkeyProvider } from './hotkeys'
 import { TaskCompletionContextMenu, CommonOptionsContextMenu, TabManagementContextMenu, ProfilesContextMenu } from './tabContextMenu'
 import { LastCLIHandler, ProfileCLIHandler } from './cli'
@@ -62,7 +63,8 @@ export function TranslateMessageFormatCompilerFactory (): TranslateMessageFormat
 const PROVIDERS = [
     { provide: HotkeyProvider, useClass: AppHotkeyProvider, multi: true },
     { provide: Theme, useClass: NewTheme, multi: true },
-    { provide: ConfigProvider, useClass: CoreConfigProvider, multi: true },
+            { provide: ConfigProvider, useClass: CoreConfigProvider, multi: true },
+        { provide: ConfigProvider, useClass: ButtonBarConfigProvider, multi: true },
     { provide: TabContextMenuItemProvider, useClass: CommonOptionsContextMenu, multi: true },
     { provide: TabContextMenuItemProvider, useClass: TabManagementContextMenu, multi: true },
     { provide: TabContextMenuItemProvider, useClass: TaskCompletionContextMenu, multi: true },
@@ -133,6 +135,7 @@ const PROVIDERS = [
         ProfileIconComponent,
         ProfileTreeComponent,
         TabbyFormatedDatePipe,
+        ButtonBarComponent,
     ],
     exports: [
         AppRootComponent,
@@ -148,6 +151,7 @@ const PROVIDERS = [
         CdkAutoDropGroup,
         ProfileIconComponent,
         TabbyFormatedDatePipe,
+        ButtonBarComponent,
     ],
 })
 export default class AppModule { // eslint-disable-line @typescript-eslint/no-extraneous-class

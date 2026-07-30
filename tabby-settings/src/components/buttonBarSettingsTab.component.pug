@@ -1,0 +1,135 @@
+h3 Button Bar Settings
+
+.form-group
+    .form-check
+        input#button-bar-enabled.form-check-input(
+            type='checkbox',
+            [checked]='config.store.buttonBar?.enabled',
+            (change)='toggleEnabled($event.target.checked)'
+        )
+        label.form-check-label(for='button-bar-enabled') Enable button bar
+
+.form-group(*ngIf='config.store.buttonBar?.enabled')
+    .form-check
+        input#button-bar-collapsed.form-check-input(
+            type='checkbox',
+            [checked]='config.store.buttonBar?.collapsed',
+            (change)='toggleCollapsed($event.target.checked)'
+        )
+        label.form-check-label(for='button-bar-collapsed') Start collapsed
+
+.form-group(*ngIf='config.store.buttonBar?.enabled')
+    h4 Button Configuration
+    p.text-muted Configure buttons that send terminal commands or trigger app actions.
+
+    .mb-3
+        button.btn.btn-primary.btn-sm.me-2((click)='addButton("terminal")') Add Terminal Command
+        button.btn.btn-success.btn-sm((click)='addButton("app-command")') Add App Command
+
+    .alert.alert-info(*ngIf='!config.store.buttonBar?.buttons?.length')
+        | No buttons configured. Click "Add Terminal Command" or "Add App Command" to create your first button.
+
+    .button-list(*ngIf='config.store.buttonBar?.buttons?.length')
+        .card.mb-3(*ngFor='let button of config.store.buttonBar?.buttons; let i = index')
+            .card-body
+                .row
+                    .col-md-3
+                        .form-group
+                            label Button Label
+                            input.form-control(
+                                type='text',
+                                [value]='button.label',
+                                (input)='updateButtonLabel(i, $event.target.value)',
+                                placeholder='Button name'
+                            )
+
+                    .col-md-2
+                        .form-group
+                            label Type
+                            select.form-control(
+                                [value]='button.type || "terminal"',
+                                (change)='updateButtonType(i, $event.target.value)'
+                            )
+                                option(value='terminal') Terminal Command
+                                option(value='app-command') App Command
+
+                    .col-md-5(*ngIf='button.type === "terminal" || !button.type')
+                        .form-group
+                            label Terminal Command
+                            input.form-control(
+                                type='text',
+                                [value]='button.command',
+                                (input)='updateButtonCommand(i, $event.target.value)',
+                                placeholder='e.g., ls -la, pwd, clear'
+                            )
+
+                    .col-md-5(*ngIf='button.type === "app-command"')
+                        .form-group
+                            label App Command
+                            select.form-control(
+                                [value]='button.command',
+                                (change)='updateButtonCommand(i, $event.target.value)'
+                            )
+                                option(value='') Select an app command...
+                                optgroup(label='Terminal Actions')
+                                    option(value='clear') Clear Terminal
+                                    option(value='copy') Copy Selection
+                                    option(value='paste') Paste
+                                    option(value='select-all') Select All
+                                    option(value='ctrl-c') Interrupt (Ctrl+C)
+                                    option(value='search') Search Terminal
+                                optgroup(label='Terminal Navigation')
+                                    option(value='home') Go to Line Start
+                                    option(value='end') Go to Line End
+                                    option(value='previous-word') Previous Word
+                                    option(value='next-word') Next Word
+                                    option(value='scroll-to-top') Scroll to Top
+                                    option(value='scroll-to-bottom') Scroll to Bottom
+                                optgroup(label='Terminal Zoom')
+                                    option(value='zoom-in') Zoom In
+                                    option(value='zoom-out') Zoom Out
+                                    option(value='reset-zoom') Reset Zoom
+                                optgroup(label='Tab Management')
+                                    option(value='close-tab') Close Tab
+                                    option(value='duplicate-tab') Duplicate Tab
+                                    option(value='restart-tab') Restart Tab
+                                    option(value='next-tab') Next Tab
+                                    option(value='previous-tab') Previous Tab
+                                    option(value='rename-tab') Rename Tab
+                                optgroup(label='Split Panes')
+                                    option(value='split-right') Split Right
+                                    option(value='split-bottom') Split Bottom
+                                    option(value='close-pane') Close Pane
+                                    option(value='pane-maximize') Maximize Pane
+                                optgroup(label='Pane Navigation')
+                                    option(value='pane-nav-right') Navigate Right
+                                    option(value='pane-nav-left') Navigate Left
+                                    option(value='pane-nav-up') Navigate Up
+                                    option(value='pane-nav-down') Navigate Down
+                                optgroup(label='Selectors')
+                                    option(value='command-selector') Command Selector
+                                    option(value='profile-selector') Profile Selector
+                                optgroup(label='Window')
+                                    option(value='toggle-fullscreen') Toggle Fullscreen
+
+                    .col-md-2
+                        .form-group
+                            label Color
+                            input.form-control(
+                                type='color',
+                                [value]='button.color',
+                                (input)='updateButtonColor(i, $event.target.value)'
+                            )
+
+                .row.mt-2
+                    .col-md-8
+                        .form-group
+                            label Tooltip
+                            input.form-control(
+                                type='text',
+                                [value]='button.tooltip',
+                                (input)='updateButtonTooltip(i, $event.target.value)',
+                                placeholder='Tooltip text'
+                            )
+                    .col-md-4.d-flex.align-items-end
+                        button.btn.btn-outline-danger.btn-sm((click)='removeButton(i)') Remove Button

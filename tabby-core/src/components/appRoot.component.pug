@@ -106,7 +106,7 @@ title-bar(
             div.window-controls-spacer(
                 *ngIf='config.store.appearance.frame == "thin" && (hostApp.platform == Platform.Windows) && (config.store.appearance.tabsLocation == "top")',
             )
-        .content
+        .content([class.has-button-bar]='ready && buttonBarVisible && config.store?.buttonBar?.enabled')
             start-page.content-tab.content-tab-active(*ngIf='ready && app.tabs.length == 0')
 
             tab-body.content-tab(
@@ -117,4 +117,11 @@ title-bar(
                 [tab]='tab',
             )
 
+            button-bar(
+                *ngIf='ready && buttonBarVisible && config.store?.buttonBar?.enabled',
+                [buttons]='buttonBarButtons',
+                [collapsed]='buttonBarCollapsed',
+                (collapsedChange)='onButtonBarCollapsedChange($event)',
+                (hide)='onButtonBarHide()'
+            )
 ng-template(ngbModalContainer)
