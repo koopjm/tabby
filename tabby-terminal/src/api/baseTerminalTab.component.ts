@@ -449,6 +449,10 @@ export class BaseTerminalTabComponent<P extends BaseTerminalProfile> extends Bas
                     this.frontend.reactivate()
                 }
             })
+
+        this.subscribeUntilDestroyed(this.frontend.pasteRequested$, () => {
+            this.paste()
+        })
     }
 
     protected onFrontendReady (): void {

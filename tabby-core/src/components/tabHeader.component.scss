@@ -177,4 +177,10 @@ $tabs-height: 38px;
         left: 0;
         right: 0;
     }
+
+    &.active {
+        border-bottom: 2px solid var(--theme-primary);
+        padding-bottom: 0px;
+        padding-top: 2px;
+    }
 }

@@ -131,6 +131,11 @@ export class HotkeysService {
             return
         }
 
+        // If this is a Shift+Insert event that was already handled by the frontend, ignore it
+        if (nativeEvent.defaultPrevented && 'key' in nativeEvent && nativeEvent.key === 'Insert' && nativeEvent.shiftKey) {
+            return
+        }
+
         nativeEvent['event'] = eventName
 
         const eventData = {
@@ -356,14 +361,12 @@ export class HotkeysService {
                 this.emitHotkeyOff(this.pressedHotkey)
             }
         }
-        console.debug('Matched hotkey', hotkey)
         this._hotkey.next(hotkey)
         this.pressedHotkey = hotkey
         this.recognitionPhase = false
     }
 
     private emitHotkeyOff (hotkey: string) {
-        console.debug('Unmatched hotkey', hotkey)
         this._hotkeyOff.next(hotkey)
         this.pressedHotkey = null
     }

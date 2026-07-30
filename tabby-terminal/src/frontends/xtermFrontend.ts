@@ -1,5 +1,5 @@
 import deepEqual from 'deep-equal'
-import { BehaviorSubject, filter, firstValueFrom, fromEvent, takeUntil } from 'rxjs'
+import { BehaviorSubject, filter, firstValueFrom, fromEvent, takeUntil, Subject } from 'rxjs'
 import { Injector } from '@angular/core'
 import { ConfigService, getCSSFontFamily, getWindows10Build, HostAppService, HotkeysService, Platform, PlatformService, TerminalColorScheme, ThemesService } from 'tabby-core'
 import { Frontend, SearchOptions, SearchState } from './frontend'
@@ -95,6 +95,7 @@ export class XTermFrontend extends Frontend {
     private platformService: PlatformService
     private hostApp: HostAppService
     private themes: ThemesService
+    public pasteRequested$ = new Subject<void>() // New property
 
     constructor (injector: Injector) {
         super(injector)
@@ -191,6 +192,10 @@ export class XTermFrontend extends Frontend {
                     event.key === 'Insert' && event.shiftKey
                 ) {
                     event.preventDefault()
+                    event.stopImmediatePropagation()
+                    if (event.type === 'keydown') {
+                        this.pasteRequested$.next()
+                    }
                     return false
                 }
             }
@@ -304,6 +309,14 @@ export class XTermFrontend extends Frontend {
 
         // Work around font loading bugs
         await new Promise(resolve => setTimeout(resolve, this.hostApp.platform === Platform.Web ? 1000 : 0))
+
+        // Add paste event listener to the xterm.js textarea
+        if (this.xterm.textarea) {
+            this.xterm.textarea.addEventListener('paste', (event: ClipboardEvent) => {
+                event.preventDefault()
+                this.pasteRequested$.next()
+            })
+        }
 
         // Just configure the colors to avoid a flash
         this.configureColors(profile.terminalColorScheme)
