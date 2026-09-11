@@ -1,6 +1,7 @@
 import { Observable, Subject } from 'rxjs'
 import { Injector } from '@angular/core'
 import { ConfigService, LogService } from 'tabby-core'
+import { PTYInterface } from 'tabby-local'
 import { BaseSession, UTF8SplitterMiddleware, InputProcessor } from 'tabby-terminal'
 import { SSHProfile } from '../api'
 
@@ -13,7 +14,7 @@ export class SystemSSHSession extends BaseSession {
     private ptyClosed = false
     private profile: SSHProfile
     private config: ConfigService
-    private ptyInterface: any
+    private ptyInterface: PTYInterface
     private serviceMessage = new Subject<string>()
 
     get serviceMessage$ (): Observable<string> { return this.serviceMessage }
@@ -25,7 +26,7 @@ export class SystemSSHSession extends BaseSession {
         super(injector.get(LogService).create(`system-ssh-${profile.options.host}-${profile.options.port}`))
         this.profile = profile
         this.config = injector.get(ConfigService)
-        this.ptyInterface = injector.get<any>('PTYInterface' as any)
+        this.ptyInterface = injector.get(PTYInterface)
         this.setLoginScriptsOptions(this.profile.options)
         this.middleware.push(new UTF8SplitterMiddleware())
         this.middleware.push(new InputProcessor(profile.options.input))
